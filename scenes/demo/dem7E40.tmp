@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://boxygq6rah3nt"]
+
+[ext_resource type="PackedScene" uid="uid://b66bhmoyhhvbl" path="res://scenes/demo/ui.tscn" id="1_0y5d8"]
+[ext_resource type="PackedScene" uid="uid://bm5yvoypyavd1" path="res://scenes/player.tscn" id="2_5k47h"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_idp25"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_4uxuy"]
+sky_material = SubResource("ProceduralSkyMaterial_idp25")
+
+[sub_resource type="Environment" id="Environment_tumsu"]
+background_mode = 2
+sky = SubResource("Sky_4uxuy")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_47md4"]
+size = Vector2(15, 15)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_23sgi"]
+data = PackedVector3Array(7.5, 0, 7.5, -7.5, 0, 7.5, 7.5, 0, -7.5, -7.5, 0, 7.5, -7.5, 0, -7.5, 7.5, 0, -7.5)
+
+[node name="DemoLevel" type="Node3D"]
+
+[node name="Ui" parent="." node_paths=PackedStringArray("player") instance=ExtResource("1_0y5d8")]
+player = NodePath("../Player")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tumsu")
+
+[node name="Player" parent="." instance=ExtResource("2_5k47h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.427022, 0)
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("PlaneMesh_47md4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("ConcavePolygonShape3D_23sgi")

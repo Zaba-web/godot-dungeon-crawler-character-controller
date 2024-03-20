@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bm5yvoypyavd1"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_bed1r"]
+[ext_resource type="Script" path="res://scripts/player/modules/movement.gd" id="2_nqain"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_142am"]
+radius = 0.326728
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("modules_container")]
+script = ExtResource("1_bed1r")
+modules_container = NodePath("Modules")
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="MainCamera" type="Camera3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00742, 0)
+shape = SubResource("CapsuleShape3D_142am")
+
+[node name="Modules" type="Node" parent="."]
+
+[node name="Movement" type="Node" parent="Modules"]
+script = ExtResource("2_nqain")
