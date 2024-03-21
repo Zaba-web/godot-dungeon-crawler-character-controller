@@ -7,13 +7,13 @@ const DIRECTION_BACK = 1
 @export var cell_size: float = 2
 
 # Movement speed
-@export var movement_speed: float = 5
+@export var movement_speed: float = 10
 
 # Maximum commands that can be queued
 @export var max_queued_commands: int = 2
 
 # Turn speed
-@export var turn_speed: float = .3
+@export var turn_speed: float = .4
 
 # Action names definition in advance
 @export var move_forward_action_name: String = "move_forward"
@@ -31,7 +31,7 @@ var movement_target: Vector3
 var rotation_target: float = 0
 
 # Determinates direction of player movement
-var movement_direction: int = 0;
+var movement_direction: Vector3 = Vector3.ZERO;
 
 # List of movement commands
 enum Commands {
@@ -43,12 +43,31 @@ enum Commands {
 	STRAFE_RIGHT
 }
 
+# List of movement directions
+enum Directions {
+	FORWARD,
+	BACK,
+	LEFT,
+	RIGHT
+}
+
+var look_direction_to_move_direction = {
+	"0":  Directions.FORWARD,
+	"1":  Directions.LEFT,
+	"2":  Directions.BACK,
+	"-1": Directions.RIGHT,
+	"-2": Directions.BACK,
+	"3":  Directions.RIGHT,
+	"-3": Directions.LEFT
+}
+
 func _ready():
 	super()
 	allowed_state = [State.List.IDDLE, State.List.MOVING, State.List.TURNING]
 
 # Handle player movement
 func __physics_process(delta: float, player: AbstractCharacter) -> void:
+
 	if movement_target == Vector3.ZERO:
 		movement_target = player.position
 	
@@ -87,7 +106,11 @@ func _process_movement(delta: float, player: AbstractCharacter) -> void:
 	if player.get_state() == State.List.IDDLE && commands_queue.size() > 0:
 		var command = commands_queue.pop_front()
 		movement_actions[command].call(player)
+	
+	if _is_arrived(player):
+		movement_direction = Vector3.ZERO
 
+	player.velocity = movement_direction
 
 # Add command in queue
 func _add_command(command: Commands) -> void:
@@ -98,25 +121,40 @@ func _add_command(command: Commands) -> void:
 
 # Handle move forward command
 func _move_forward(player: AbstractCharacter) -> void:
-	movement_direction = DIRECTION_FORWARD
-	_set_movement_target(player)
-	print(movement_target)
+	_set_movement_target(player, 1)
 
 # Handle move back commandw
 func _move_back(player: AbstractCharacter) -> void:
-	movement_direction = DIRECTION_BACK
-	_set_movement_target(player)
+	_set_movement_target(player, -1)
 
 # Handle turn left command
 func _turn_left(player: AbstractCharacter) -> void: 
 	rotation_target += 1
+	if rotation_target == 4 : rotation_target = 0
 	player.rotation_target = deg_to_rad(rotation_target * 90)
 
 # Handle turn right command
 func _turn_right(player: AbstractCharacter) -> void:
 	rotation_target -= 1
+	if rotation_target == -4 : rotation_target = 0
 	player.rotation_target = deg_to_rad(rotation_target * 90)
 
 # Set player movement target 
-func _set_movement_target(player: AbstractCharacter) -> void:
-	pass #to implement
+func _set_movement_target(player: AbstractCharacter, direction_mul: int) -> void:
+	match look_direction_to_move_direction[str(rotation_target)]:
+		Directions.FORWARD:
+			movement_target.z -= cell_size * direction_mul
+			movement_direction = Vector3(0, 0, -movement_speed * direction_mul)
+		Directions.BACK:
+			movement_target.z += cell_size * direction_mul
+			movement_direction = Vector3(0, 0, movement_speed * direction_mul)
+		Directions.LEFT:
+			movement_target.x -= cell_size * direction_mul
+			movement_direction = Vector3(-movement_speed * direction_mul, 0, 0)
+		Directions.RIGHT:
+			movement_target.x += cell_size * direction_mul
+			movement_direction = Vector3(movement_speed * direction_mul, 0, 0)
+
+# Check if played reached destination
+func _is_arrived(player: AbstractCharacter) -> bool:
+	return (is_equal_approx(player.global_position.x, movement_target.x) && is_equal_approx(player.global_position.z, movement_target.z))
