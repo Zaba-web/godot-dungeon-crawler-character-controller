@@ -23,6 +23,9 @@ const DIRECTION_BACK = 1
 @export var strafe_left_action_name: String = "strafe_left"
 @export var strafe_right_action_name: String = "strafe_right"
 
+# Size of player collider, needed for movement possibility check
+@export var player_collider_size = .4
+
 # Queue of movement commands
 var commands_queue: Array
 
@@ -132,11 +135,11 @@ func _add_command(command: Commands) -> void:
 
 # Handle move forward command
 func _move_forward(player: AbstractCharacter) -> void:
-	_set_movement_target(1)
+	_set_movement_target(player, 1)
 
 # Handle move back commandw
 func _move_back(player: AbstractCharacter) -> void:
-	_set_movement_target(-1)
+	_set_movement_target(player, -1)
 
 # Handle movement in left side
 func _strafe_left(player: AbstractCharacter) -> void:
@@ -146,7 +149,7 @@ func _strafe_left(player: AbstractCharacter) -> void:
 	if strafe_direction > Directions.RIGHT:
 		strafe_direction = Directions.FORWARD
 	
-	_set_movement_target(1, strafe_direction)
+	_set_movement_target(player, 1, strafe_direction)
 
 # Handle movement in right side
 func _strafe_right(player: AbstractCharacter) -> void:
@@ -156,7 +159,7 @@ func _strafe_right(player: AbstractCharacter) -> void:
 	if strafe_direction < Directions.FORWARD:
 		strafe_direction = Directions.RIGHT
 	
-	_set_movement_target(1, strafe_direction)
+	_set_movement_target(player, 1, strafe_direction)
 
 # Handle turn left command
 func _turn_left(player: AbstractCharacter) -> void: 
@@ -171,24 +174,56 @@ func _turn_right(player: AbstractCharacter) -> void:
 	player.rotation_target = deg_to_rad(rotation_target * 90)
 
 # Set player movement target 
-func _set_movement_target(direction_mul: int, direction = null) -> void:
+func _set_movement_target(player: AbstractCharacter, direction_mul: int, direction = null) -> void:
 	if direction == null:
 		direction = look_direction_to_move_direction[str(rotation_target)]
 	
+	var potential_target = movement_target
+	
 	match direction:
 		Directions.FORWARD:
+			potential_target.z -= cell_size * direction_mul
+			if not _can_move(player, potential_target):
+				return
+			
 			movement_target.z -= cell_size * direction_mul
 			movement_direction = Vector3(0, 0, -movement_speed * direction_mul)
 		Directions.BACK:
+			potential_target.z += cell_size * direction_mul
+			if not _can_move(player, potential_target):
+				return
+			
 			movement_target.z += cell_size * direction_mul
 			movement_direction = Vector3(0, 0, movement_speed * direction_mul)
 		Directions.LEFT:
+			potential_target.x -= cell_size * direction_mul
+			if not _can_move(player, potential_target):
+				return
+			
 			movement_target.x -= cell_size * direction_mul
 			movement_direction = Vector3(-movement_speed * direction_mul, 0, 0)
 		Directions.RIGHT:
+			potential_target.x += cell_size * direction_mul
+			if not _can_move(player, potential_target):
+				return
+			
 			movement_target.x += cell_size * direction_mul
 			movement_direction = Vector3(movement_speed * direction_mul, 0, 0)
 
 # Check if played reached destination
 func _is_arrived(player: AbstractCharacter) -> bool:
-	return (is_equal_approx(player.global_position.x, movement_target.x) && is_equal_approx(player.global_position.z, movement_target.z))
+	return abs(player.global_position.x - movement_target.x) <= 0.001 && abs(player.global_position.z - movement_target.z) <= 0.001
+
+# Check if can move in the direction
+func _can_move(player: AbstractCharacter, movement_target: Vector3) -> bool:
+	var from = player.global_position
+	from.y = 1
+	
+	var query = PhysicsRayQueryParameters3D.create(from, movement_target)
+	var space_state = player.get_world_3d().direct_space_state
+	var result = space_state.intersect_ray(query)
+
+	if result.has("collider"):
+		return false
+
+	return true
