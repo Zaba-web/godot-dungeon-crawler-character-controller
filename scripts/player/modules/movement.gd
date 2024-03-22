@@ -15,11 +15,13 @@ const DIRECTION_BACK = 1
 # Turn speed
 @export var turn_speed: float = .4
 
-# Action names definition in advance
+# Action names definition
 @export var move_forward_action_name: String = "move_forward"
 @export var move_back_action_name: String = "move_back"
 @export var turn_left_action_name: String = "turn_left"
 @export var turn_right_action_name: String = "turn_right"
+@export var strafe_left: String = "strafe_left"
+@export var strafe_right: String = "strafe_right"
 
 # Queue of movement commands
 var commands_queue: Array
@@ -46,11 +48,12 @@ enum Commands {
 # List of movement directions
 enum Directions {
 	FORWARD,
-	BACK,
 	LEFT,
+	BACK,
 	RIGHT
 }
 
+# Map look direction to the move direction
 var look_direction_to_move_direction = {
 	"0":  Directions.FORWARD,
 	"1":  Directions.LEFT,
@@ -89,6 +92,12 @@ func __physics_process(delta: float, player: AbstractCharacter) -> void:
 	if Input.is_action_just_pressed(turn_left_action_name):
 		_add_command(Commands.TURN_LEFT)
 		
+	if Input.is_action_just_pressed(strafe_left):
+		_add_command(Commands.STRAFE_LEFT)
+		
+	if Input.is_action_just_pressed(strafe_right):
+		_add_command(Commands.STRAFE_RIGHT)
+		
 	_process_movement(delta, player)
 	
 # Process movement
@@ -99,7 +108,9 @@ func _process_movement(delta: float, player: AbstractCharacter) -> void:
 		Commands.MOVE_FORWARD: _move_forward,
 		Commands.MOVE_BACK: _move_back,
 		Commands.TURN_LEFT: _turn_left,
-		Commands.TURN_RIGHT: _turn_right
+		Commands.TURN_RIGHT: _turn_right,
+		Commands.STRAFE_RIGHT: _strafe_right,
+		Commands.STRAFE_LEFT: _strafe_left
 	}
 	
 	# Get next command from queqe after previous is completed
@@ -127,6 +138,26 @@ func _move_forward(player: AbstractCharacter) -> void:
 func _move_back(player: AbstractCharacter) -> void:
 	_set_movement_target(player, -1)
 
+# Handle movement in left side
+func _strafe_left(player: AbstractCharacter) -> void:
+	# Here we calculate in which absolute direction player should move to make a strafe
+	var strafe_direction = look_direction_to_move_direction[str(rotation_target)] + 1
+	# Direction overflow logic
+	if strafe_direction > Directions.RIGHT:
+		strafe_direction = Directions.FORWARD
+	
+	_set_movement_target(player, 1, strafe_direction)
+
+# Handle movement in right side
+func _strafe_right(player: AbstractCharacter) -> void:
+	# Here we calculate in which absolute direction player should move to make a strafe
+	var strafe_direction = look_direction_to_move_direction[str(rotation_target)] - 1
+	# Direction overflow logic
+	if strafe_direction < Directions.FORWARD:
+		strafe_direction = Directions.RIGHT
+	
+	_set_movement_target(player, 1, strafe_direction)
+
 # Handle turn left command
 func _turn_left(player: AbstractCharacter) -> void: 
 	rotation_target += 1
@@ -140,8 +171,11 @@ func _turn_right(player: AbstractCharacter) -> void:
 	player.rotation_target = deg_to_rad(rotation_target * 90)
 
 # Set player movement target 
-func _set_movement_target(player: AbstractCharacter, direction_mul: int) -> void:
-	match look_direction_to_move_direction[str(rotation_target)]:
+func _set_movement_target(player: AbstractCharacter, direction_mul: int, direction = null) -> void:
+	if direction == null:
+		direction = look_direction_to_move_direction[str(rotation_target)]
+	
+	match direction:
 		Directions.FORWARD:
 			movement_target.z -= cell_size * direction_mul
 			movement_direction = Vector3(0, 0, -movement_speed * direction_mul)
