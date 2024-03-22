@@ -225,7 +225,33 @@ func _can_move(player: AbstractCharacter, movement_target: Vector3) -> bool:
 
 # Process hold input
 func _process_hold_input() -> void:
-	if cd_active:
+	# Need this to be able queqe commands
+	
+	if Input.is_action_just_pressed(turn_right_action_name):
+		_add_command(Commands.TURN_RIGHT)
+		_set_input_cd()
+		
+	if Input.is_action_just_pressed(turn_left_action_name):
+		_add_command(Commands.TURN_LEFT)
+		_set_input_cd()
+	
+	if Input.is_action_just_pressed(move_forward_action_name):
+		_add_command(Commands.MOVE_FORWARD)
+		_set_input_cd()
+		
+	if Input.is_action_just_pressed(move_back_action_name):
+		_add_command(Commands.MOVE_BACK)
+		_set_input_cd()
+	
+	if Input.is_action_just_pressed(strafe_left_action_name):
+		_add_command(Commands.STRAFE_LEFT)
+		_set_input_cd()
+		
+	if Input.is_action_just_pressed(strafe_right_action_name):
+		_add_command(Commands.STRAFE_RIGHT)
+		_set_input_cd()
+	
+	if cd_active || commands_queue.size() > 0:
 		return
 	
 	if Input.is_action_pressed(move_forward_action_name):
