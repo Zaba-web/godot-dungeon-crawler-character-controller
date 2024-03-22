@@ -79,3 +79,8 @@ cursor_down={
 "events": [Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":3,"axis_value":1.0,"script":null)
 ]
 }
+
+[physics]
+
+common/physics_ticks_per_second=240
+common/max_physics_steps_per_frame=10
