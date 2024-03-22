@@ -4,7 +4,7 @@ extends AbstractModule
 @export var camera: Camera3D
 
 # Max distance at which player is able to interact with objects 
-@export var max_interaction_distance = 4
+@export var max_interaction_distance: float = 4
 
 # Action name for interaction
 @export var interact_action_name: String = "interact"
@@ -15,14 +15,15 @@ extends AbstractModule
 @export var cursor_up_action_name: String = "cursor_up"
 @export var cursor_down_action_name: String = "cursor_down"
 
-@export var gamepad_cursor_speed: float = 500
+# Sensitivity of the gamepad cursor stick
+@export var gamepad_cursor_stick_sens: float = 500
 
 # Object that cursor currently is on 
 var selected_object: Node3D = null
 
 # Handle mouse interaction
 func __physics_process(_delta: float, player: AbstractCharacter) -> void:
-	var raycast_result = _cast_ray_from_cursor()
+	var raycast_result = _cast_ray_from_cursor(player)
 	_handle_gamepad_cursor_movement(_delta)
 	
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
@@ -30,7 +31,7 @@ func __physics_process(_delta: float, player: AbstractCharacter) -> void:
 		_handle_object_interact()
 
 # Shot ray from cursor 
-func _cast_ray_from_cursor() -> Dictionary:
+func _cast_ray_from_cursor(player: AbstractCharacter) -> Dictionary:
 	var mouse_pos = get_viewport().get_mouse_position()
 	var ray_length = max_interaction_distance
 	var from = camera.project_ray_origin(mouse_pos)
@@ -40,7 +41,8 @@ func _cast_ray_from_cursor() -> Dictionary:
 	
 	ray_query.from = from
 	ray_query.to = to
-	ray_query.collide_with_areas = false
+	ray_query.hit_from_inside = true
+	ray_query.exclude = [player]
 	
 	return space.intersect_ray(ray_query)
 
@@ -65,5 +67,5 @@ func _handle_gamepad_cursor_movement(delta) -> void:
 	var mouse_pos = get_viewport().get_mouse_position()
 	var cursor_velocity = Vector2.ZERO
 	cursor_velocity = Input.get_vector(cursor_left_action_name, cursor_right_action_name, cursor_up_action_name, cursor_down_action_name)
-	Input.warp_mouse(mouse_pos + cursor_velocity * gamepad_cursor_speed * delta)
+	Input.warp_mouse(mouse_pos + cursor_velocity * gamepad_cursor_stick_sens * delta)
 
