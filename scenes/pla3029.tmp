@@ -25,6 +25,5 @@ shape = SubResource("CapsuleShape3D_142am")
 [node name="Movement" type="Node" parent="Modules"]
 script = ExtResource("2_nqain")
 
-[node name="Node" type="Node" parent="Modules" node_paths=PackedStringArray("camera")]
+[node name="Node" type="Node" parent="Modules"]
 script = ExtResource("3_35b56")
-camera = NodePath("../../Visuals/MainCamera")
