@@ -7,16 +7,16 @@ const DIRECTION_BACK = 1
 @export var cell_size: float = 2
 
 # Movement speed
-@export var movement_speed: float = 10
+@export var movement_speed: float = 8
 
 # Maximum commands that can be queued
 @export var max_queued_commands: int = 2
 
 # Turn speed
-@export var turn_speed: float = .4
+@export var turn_speed: float = .2
 
 # During this time span input will be disabled before next command could be processed
-@export var input_cd_timeout_s: float = .3
+@export var input_cd_timeout_s: float = .2
 
 # Action names definition
 @export var move_forward_action_name: String = "move_forward"
@@ -229,11 +229,11 @@ func _process_hold_input() -> void:
 	
 	if Input.is_action_just_pressed(turn_right_action_name):
 		_add_command(Commands.TURN_RIGHT)
-		_set_input_cd()
+		_set_input_cd(Commands.TURN_RIGHT)
 		
 	if Input.is_action_just_pressed(turn_left_action_name):
 		_add_command(Commands.TURN_LEFT)
-		_set_input_cd()
+		_set_input_cd(Commands.TURN_LEFT)
 	
 	if Input.is_action_just_pressed(move_forward_action_name):
 		_add_command(Commands.MOVE_FORWARD)
@@ -264,11 +264,11 @@ func _process_hold_input() -> void:
 		
 	if Input.is_action_pressed(turn_right_action_name):
 		_add_command(Commands.TURN_RIGHT)
-		_set_input_cd()
+		_set_input_cd(Commands.TURN_RIGHT)
 		
 	if Input.is_action_pressed(turn_left_action_name):
 		_add_command(Commands.TURN_LEFT)
-		_set_input_cd()
+		_set_input_cd(Commands.TURN_LEFT)
 		
 	if Input.is_action_pressed(strafe_left_action_name):
 		_add_command(Commands.STRAFE_LEFT)
@@ -279,9 +279,15 @@ func _process_hold_input() -> void:
 		_set_input_cd()
 
 # Set input cooldown
-func _set_input_cd() -> void:
+func _set_input_cd(command: Variant = null) -> void:
+	var timeout_real_value = input_cd_timeout_s
+	
+	# Timeout should be higher for turning (for gamepads)
+	if command != null && (command == Commands.TURN_RIGHT || command == Commands.TURN_LEFT):
+		timeout_real_value *= 2.5
+	
 	commands_cd_timer.stop()
-	commands_cd_timer.wait_time = input_cd_timeout_s
+	commands_cd_timer.wait_time = timeout_real_value
 	commands_cd_timer.start()
 	cd_active = true
 
