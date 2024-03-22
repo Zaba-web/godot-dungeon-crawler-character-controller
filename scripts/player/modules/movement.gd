@@ -20,8 +20,8 @@ const DIRECTION_BACK = 1
 @export var move_back_action_name: String = "move_back"
 @export var turn_left_action_name: String = "turn_left"
 @export var turn_right_action_name: String = "turn_right"
-@export var strafe_left: String = "strafe_left"
-@export var strafe_right: String = "strafe_right"
+@export var strafe_left_action_name: String = "strafe_left"
+@export var strafe_right_action_name: String = "strafe_right"
 
 # Queue of movement commands
 var commands_queue: Array
@@ -69,7 +69,7 @@ func _ready():
 	allowed_state = [State.List.IDDLE, State.List.MOVING, State.List.TURNING]
 
 # Handle player movement
-func __physics_process(delta: float, player: AbstractCharacter) -> void:
+func __physics_process(_delta: float, player: AbstractCharacter) -> void:
 
 	if movement_target == Vector3.ZERO:
 		movement_target = player.position
@@ -92,16 +92,16 @@ func __physics_process(delta: float, player: AbstractCharacter) -> void:
 	if Input.is_action_just_pressed(turn_left_action_name):
 		_add_command(Commands.TURN_LEFT)
 		
-	if Input.is_action_just_pressed(strafe_left):
+	if Input.is_action_just_pressed(strafe_left_action_name):
 		_add_command(Commands.STRAFE_LEFT)
 		
-	if Input.is_action_just_pressed(strafe_right):
+	if Input.is_action_just_pressed(strafe_right_action_name):
 		_add_command(Commands.STRAFE_RIGHT)
 		
-	_process_movement(delta, player)
+	_process_movement(player)
 	
 # Process movement
-func _process_movement(delta: float, player: AbstractCharacter) -> void:
+func _process_movement(player: AbstractCharacter) -> void:
 	
 	# Set of movement actions for target position/rotation transformation
 	var movement_actions = {
@@ -132,11 +132,11 @@ func _add_command(command: Commands) -> void:
 
 # Handle move forward command
 func _move_forward(player: AbstractCharacter) -> void:
-	_set_movement_target(player, 1)
+	_set_movement_target(1)
 
 # Handle move back commandw
 func _move_back(player: AbstractCharacter) -> void:
-	_set_movement_target(player, -1)
+	_set_movement_target(-1)
 
 # Handle movement in left side
 func _strafe_left(player: AbstractCharacter) -> void:
@@ -146,7 +146,7 @@ func _strafe_left(player: AbstractCharacter) -> void:
 	if strafe_direction > Directions.RIGHT:
 		strafe_direction = Directions.FORWARD
 	
-	_set_movement_target(player, 1, strafe_direction)
+	_set_movement_target(1, strafe_direction)
 
 # Handle movement in right side
 func _strafe_right(player: AbstractCharacter) -> void:
@@ -156,7 +156,7 @@ func _strafe_right(player: AbstractCharacter) -> void:
 	if strafe_direction < Directions.FORWARD:
 		strafe_direction = Directions.RIGHT
 	
-	_set_movement_target(player, 1, strafe_direction)
+	_set_movement_target(1, strafe_direction)
 
 # Handle turn left command
 func _turn_left(player: AbstractCharacter) -> void: 
@@ -171,7 +171,7 @@ func _turn_right(player: AbstractCharacter) -> void:
 	player.rotation_target = deg_to_rad(rotation_target * 90)
 
 # Set player movement target 
-func _set_movement_target(player: AbstractCharacter, direction_mul: int, direction = null) -> void:
+func _set_movement_target(direction_mul: int, direction = null) -> void:
 	if direction == null:
 		direction = look_direction_to_move_direction[str(rotation_target)]
 	

@@ -8,7 +8,7 @@ func _ready():
 	pass
 
 # Called every physics frame by parent character
-func __physics_process(delta: float, player: AbstractCharacter) -> void:
+func __physics_process(_delta: float, player: AbstractCharacter) -> void:
 	pass
 
 # Check if module should be active during current character state
