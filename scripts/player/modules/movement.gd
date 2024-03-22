@@ -15,6 +15,9 @@ const DIRECTION_BACK = 1
 # Turn speed
 @export var turn_speed: float = .4
 
+# During this time span input will be disabled before next command could be processed
+@export var input_cd_timeout_s: float = .3
+
 # Action names definition
 @export var move_forward_action_name: String = "move_forward"
 @export var move_back_action_name: String = "move_back"
@@ -37,6 +40,8 @@ var rotation_target: float = 0
 
 # Determinates direction of player movement
 var movement_direction: Vector3 = Vector3.ZERO;
+
+var cd_active = false
 
 # List of movement commands
 enum Commands {
@@ -67,9 +72,16 @@ var look_direction_to_move_direction = {
 	"-3": Directions.LEFT
 }
 
+# Timer that is used for input cooldown
+var commands_cd_timer: Timer
+
 func _ready():
 	super()
+	commands_cd_timer = Timer.new()
+	commands_cd_timer.wait_time = input_cd_timeout_s
+	add_child.call_deferred(commands_cd_timer)
 	allowed_state = [State.List.IDDLE, State.List.MOVING, State.List.TURNING]
+	commands_cd_timer.timeout.connect(_reset_cd_timer)
 
 # Handle player movement
 func __physics_process(_delta: float, player: AbstractCharacter) -> void:
@@ -83,29 +95,12 @@ func __physics_process(_delta: float, player: AbstractCharacter) -> void:
 	if not _is_current_state_allowed(player.get_state()):
 		return
 
-	if Input.is_action_just_pressed(move_forward_action_name):
-		_add_command(Commands.MOVE_FORWARD)
-		
-	if Input.is_action_just_pressed(move_back_action_name):
-		_add_command(Commands.MOVE_BACK)
-		
-	if Input.is_action_just_pressed(turn_right_action_name):
-		_add_command(Commands.TURN_RIGHT)
-		
-	if Input.is_action_just_pressed(turn_left_action_name):
-		_add_command(Commands.TURN_LEFT)
-		
-	if Input.is_action_just_pressed(strafe_left_action_name):
-		_add_command(Commands.STRAFE_LEFT)
-		
-	if Input.is_action_just_pressed(strafe_right_action_name):
-		_add_command(Commands.STRAFE_RIGHT)
+	_process_hold_input()
 		
 	_process_movement(player)
 	
 # Process movement
 func _process_movement(player: AbstractCharacter) -> void:
-	
 	# Set of movement actions for target position/rotation transformation
 	var movement_actions = {
 		Commands.MOVE_FORWARD: _move_forward,
@@ -227,3 +222,44 @@ func _can_move(player: AbstractCharacter, movement_target: Vector3) -> bool:
 		return false
 
 	return true
+
+# Process hold input
+func _process_hold_input() -> void:
+	if cd_active:
+		return
+	
+	if Input.is_action_pressed(move_forward_action_name):
+		_add_command(Commands.MOVE_FORWARD)
+		_set_input_cd()
+		
+	if Input.is_action_pressed(move_back_action_name):
+		_add_command(Commands.MOVE_BACK)
+		_set_input_cd()
+		
+	if Input.is_action_pressed(turn_right_action_name):
+		_add_command(Commands.TURN_RIGHT)
+		_set_input_cd()
+		
+	if Input.is_action_pressed(turn_left_action_name):
+		_add_command(Commands.TURN_LEFT)
+		_set_input_cd()
+		
+	if Input.is_action_pressed(strafe_left_action_name):
+		_add_command(Commands.STRAFE_LEFT)
+		_set_input_cd()
+		
+	if Input.is_action_pressed(strafe_right_action_name):
+		_add_command(Commands.STRAFE_RIGHT)
+		_set_input_cd()
+
+# Set input cooldown
+func _set_input_cd() -> void:
+	commands_cd_timer.stop()
+	commands_cd_timer.wait_time = input_cd_timeout_s
+	commands_cd_timer.start()
+	cd_active = true
+
+# Reset input cooldown timer
+func _reset_cd_timer() -> void:
+	commands_cd_timer.stop()
+	cd_active = false
