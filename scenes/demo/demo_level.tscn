@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://boxygq6rah3nt"]
+[gd_scene load_steps=11 format=3 uid="uid://boxygq6rah3nt"]
 
 [ext_resource type="PackedScene" uid="uid://b66bhmoyhhvbl" path="res://scenes/demo/ui.tscn" id="1_0y5d8"]
 [ext_resource type="PackedScene" uid="uid://bm5yvoypyavd1" path="res://scenes/player.tscn" id="2_5k47h"]
 [ext_resource type="Script" path="res://scripts/demo/box_object.gd" id="3_omi6u"]
+[ext_resource type="MeshLibrary" uid="uid://xjihuqrjxom0" path="res://models/demo/tileset_mesh_lib.tres" id="4_uye4p"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_idp25"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -16,12 +17,6 @@ background_mode = 2
 sky = SubResource("Sky_4uxuy")
 tonemap_mode = 2
 glow_enabled = true
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_47md4"]
-size = Vector2(15, 15)
-
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_23sgi"]
-data = PackedVector3Array(7.5, 0, 7.5, -7.5, 0, 7.5, 7.5, 0, -7.5, -7.5, 0, 7.5, -7.5, 0, -7.5, 7.5, 0, -7.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1lufb"]
 albedo_color = Color(0.909804, 0.372549, 0.662745, 1)
@@ -41,17 +36,10 @@ player = NodePath("../Player")
 environment = SubResource("Environment_tumsu")
 
 [node name="Player" parent="." instance=ExtResource("2_5k47h")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.427022, 0)
-
-[node name="Floor" type="StaticBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
-mesh = SubResource("PlaneMesh_47md4")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("ConcavePolygonShape3D_23sgi")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.418, 1)
 
 [node name="InteractableObject" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0943, -0.750591, -4.26872)
 script = ExtResource("3_omi6u")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="InteractableObject"]
@@ -61,3 +49,12 @@ mesh = SubResource("BoxMesh_1omk3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractableObject"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.37352, 5.2084)
 shape = SubResource("ConcavePolygonShape3D_csobr")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("4_uye4p")
+cell_center_y = false
+cell_scale = 0.5
+data = {
+"cells": PackedInt32Array(3, 65532, 0, 2, 65532, 1, 1, 65532, 0, 0, 65532, 0, 65535, 65532, 0, 65534, 65532, 1, 65533, 65532, 0, 65532, 65532, 0, 65532, 65533, 0, 65533, 65533, 0, 65534, 65533, 1, 65535, 65533, 0, 0, 65533, 1, 1, 65533, 1, 2, 65533, 1, 3, 65533, 0, 3, 65534, 0, 3, 65535, 0, 3, 0, 0, 3, 1, 0, 3, 2, 0, 2, 2, 0, 2, 1, 0, 2, 0, 0, 2, 65535, 0, 2, 65534, 0, 65532, 65534, 0, 65533, 65534, 0, 65534, 65534, 0, 65535, 65534, 0, 0, 65534, 0, 1, 65534, 0, 65532, 65535, 0, 65533, 65535, 0, 65534, 65535, 1, 65535, 65535, 1, 0, 65535, 0, 1, 65535, 0, 65532, 0, 0, 65533, 0, 0, 65534, 0, 1, 65535, 0, 0, 0, 0, 0, 1, 0, 0, 65532, 1, 1, 65533, 1, 0, 65534, 1, 1, 65535, 1, 0, 0, 1, 0, 1, 1, 0, 65532, 2, 0, 65533, 2, 0, 65534, 2, 1, 65535, 2, 0, 0, 2, 0, 1, 2, 0, 3, 3, 0, 2, 3, 0, 1, 3, 0, 0, 3, 0, 65535, 3, 0, 65534, 3, 1, 65533, 3, 0, 65532, 3, 0, 4, 2, 1, 4, 3, 1, 4, 4, 1, 3, 4, 1, 2, 4, 1, 1, 4, 1, 0, 4, 1, 65535, 4, 1, 65534, 4, 1, 65533, 4, 1, 4, 1, 1, 4, 0, 1, 4, 65535, 1, 4, 65534, 1, 4, 65533, 1, 4, 65532, 1, 4, 65531, 1, 3, 65531, 1, 2, 65531, 1, 1, 65531, 1, 0, 65531, 1, 65535, 65531, 1, 65534, 65531, 1, 65533, 65531, 1, 65532, 65531, 1, 65531, 65531, 1, 65531, 65532, 1, 65531, 65533, 1, 65531, 65534, 1, 65531, 65535, 1, 65531, 0, 1, 65531, 1, 1, 65531, 2, 1, 65531, 3, 1, 65531, 4, 1, 65532, 4, 1, 65534, 65526, 1)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
