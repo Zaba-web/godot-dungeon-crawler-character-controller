@@ -8,13 +8,14 @@
 radius = 0.326728
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("modules_container")]
+collision_layer = 3
 script = ExtResource("1_bed1r")
 modules_container = NodePath("Modules")
 
 [node name="Visuals" type="Node3D" parent="."]
 
 [node name="MainCamera" type="Camera3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.26356, 0.853484)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00742, 0)
