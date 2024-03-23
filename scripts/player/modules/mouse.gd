@@ -1,24 +1,30 @@
 extends AbstractModule
 
-# Main camera from which ray will be casted
+## Main camera from which ray will be casted
 @export var camera: Camera3D
 
-# Max distance at which player is able to interact with objects 
+## Max distance at which player is able to interact with objects 
 @export var max_interaction_distance: float = 4
 
-# Action name for interaction
+## Action name for interaction
 @export var interact_action_name: String = "interact"
 
-# Action names for gamepad cursor controls
+## Action names for gamepad cursor controls (left)
 @export var cursor_left_action_name: String = "cursor_left"
+
+## Action names for gamepad cursor controls (right)
 @export var cursor_right_action_name: String = "cursor_right"
+
+## Action names for gamepad cursor controls (up)
 @export var cursor_up_action_name: String = "cursor_up"
+
+## Action names for gamepad cursor controls (down)
 @export var cursor_down_action_name: String = "cursor_down"
 
-# Sensitivity of the gamepad cursor stick
+## Sensitivity of the gamepad cursor stick
 @export var gamepad_cursor_stick_sens: float = 500
 
-# Object that cursor currently is on 
+## Object that cursor currently is on 
 var selected_object: Node3D = null
 
 # Handle mouse interaction

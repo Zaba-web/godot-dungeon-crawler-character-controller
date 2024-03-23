@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://cqm17lvy50xyq"]
+[gd_scene load_steps=7 format=3 uid="uid://cqm17lvy50xyq"]
 
 [ext_resource type="Texture2D" uid="uid://b8tf0axgmqbki" path="res://models/demo/tileset_Bricks_01-128x128.png" id="1_q1gm3"]
-[ext_resource type="ArrayMesh" uid="uid://bgy8htkmw5w3h" path="res://models/demo/floor.res" id="2_ruy2h"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l2gn4"]
 resource_name = "Wall"
@@ -59,7 +58,6 @@ skeleton = NodePath("StaticBody3D")
 shape = SubResource("ConcavePolygonShape3D_hpuhb")
 
 [node name="Floor" type="MeshInstance3D" parent="."]
-mesh = ExtResource("2_ruy2h")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
 

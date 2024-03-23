@@ -1,10 +1,11 @@
 extends AbstractModule
 
-# Main camera from which ray will be casted
+## Node that will be shaked during the movement
 @export var visuals: Node3D
 
-# Head movement parameters
+## Head movement parameters
 @export var bop_freq: float = 2.0
+## Head movement parameters
 @export var bop_amp: float = 0.08
 
 var t_bop: float = 0

@@ -3,30 +3,35 @@ extends AbstractModule
 const DIRECTION_FORWARD = -1
 const DIRECTION_BACK = 1
 
-# Grid cell size
+## Grid cell size
 @export var cell_size: float = 2
 
-# Movement speed
+## Movement speed
 @export var movement_speed: float = 8
 
-# Maximum commands that can be queued
+## Maximum commands that can be queued
 @export var max_queued_commands: int = 2
 
-# Turn speed
+## Turn speed
 @export var turn_speed: float = .2
 
-# During this time span input will be disabled before next command could be processed
+## During this time span input will be disabled before next command could be processed
 @export var input_cd_timeout_s: float = .2
 
-# Action names definition
+## Action names definition (move forward)
 @export var move_forward_action_name: String = "move_forward"
+## Action names definition (move back)
 @export var move_back_action_name: String = "move_back"
+## Action names definition (turn left)
 @export var turn_left_action_name: String = "turn_left"
+## Action names definition (turn right)
 @export var turn_right_action_name: String = "turn_right"
+## Action names definition (stafe left)
 @export var strafe_left_action_name: String = "strafe_left"
+## Action names definition (starfe right)
 @export var strafe_right_action_name: String = "strafe_right"
 
-# Size of player collider, needed for movement possibility check
+## Size of player collider, needed for movement possibility check
 @export var player_collider_size = .4
 
 # Queue of movement commands
