@@ -217,7 +217,6 @@ func _is_arrived(player: AbstractCharacter) -> bool:
 # Check if can move in the direction
 func _can_move(player: AbstractCharacter, movement_target: Vector3) -> bool:
 	var from = player.global_position
-	from.y = 1
 	
 	var query = PhysicsRayQueryParameters3D.create(from, movement_target)
 	var space_state = player.get_world_3d().direct_space_state
