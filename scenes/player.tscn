@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bm5yvoypyavd1"]
+[gd_scene load_steps=7 format=3 uid="uid://bm5yvoypyavd1"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_bed1r"]
 [ext_resource type="Script" path="res://scripts/player/modules/movement.gd" id="2_nqain"]
 [ext_resource type="Script" path="res://scripts/player/modules/mouse.gd" id="3_35b56"]
 [ext_resource type="Script" path="res://scripts/player/modules/headbop.gd" id="4_4klkg"]
+[ext_resource type="Script" path="res://scripts/player/modules/free_look.gd" id="5_1s3nr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_142am"]
 radius = 0.326728
@@ -34,3 +35,8 @@ camera = NodePath("../../Visuals/MainCamera")
 [node name="Headbop" type="Node" parent="Modules" node_paths=PackedStringArray("visuals")]
 script = ExtResource("4_4klkg")
 visuals = NodePath("../../Visuals")
+
+[node name="FreeLook" type="Node" parent="Modules" node_paths=PackedStringArray("visuals", "camera")]
+script = ExtResource("5_1s3nr")
+visuals = NodePath("../../Visuals")
+camera = NodePath("../../Visuals/MainCamera")
