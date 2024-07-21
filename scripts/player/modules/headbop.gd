@@ -7,16 +7,19 @@ extends AbstractModule
 @export var bop_freq: float = 2.0
 ## Head movement parameters
 @export var bop_amp: float = 0.08
+## Head movement intensity
+@export var bop_intensity: float = 5.5
 
 var t_bop: float = 0
 
 # Create headbop effect
 func __physics_process(_delta: float, player: AbstractCharacter) -> void:
-	_handle_bop(_delta, player)
+	var value = bop_intensity if player.get_attribute("movement") else 0
+	_handle_bop(_delta, player, value)
 
 # Apply effect
-func _handle_bop(delta: float, player: AbstractCharacter):
-	t_bop += delta * player.velocity.length() * float(player.is_on_floor())
+func _handle_bop(delta: float, player: AbstractCharacter, value: float):
+	t_bop += delta * value * float(player.is_on_floor())
 	visuals.transform.origin = _headbop(t_bop)
 
 # Calculate current value

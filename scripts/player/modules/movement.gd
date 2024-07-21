@@ -13,7 +13,7 @@ extends AbstractModule
 @export var turn_speed: float = .2
 
 ## During this time span input will be disabled before next command could be processed
-@export var input_cd_timeout_s: float = .2
+@export var input_cd_timeout_s: float = .3
 
 ## Action names definition (move forward)
 @export var move_forward_action_name: String = "move_forward"
@@ -82,7 +82,7 @@ func _process_movement(player) -> void:
 
 # Mark movement action as finished to be ready process next command
 func _action_finished() -> void:
-	busy = false 
+	busy = false
 
 # Get command based on input
 func _get_movement_command() -> Command:
