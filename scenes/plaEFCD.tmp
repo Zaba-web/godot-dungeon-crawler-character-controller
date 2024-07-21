@@ -17,7 +17,7 @@ modules_container = NodePath("Modules")
 [node name="Visuals" type="Node3D" parent="."]
 
 [node name="MainCamera" type="Camera3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.26356, 0.409171)
+transform = Transform3D(1, 0, 0, 0, 0.996186, 0.0872601, 0, -0.0872601, 0.996186, 0, 1.26356, 0.409171)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00742, 0)
