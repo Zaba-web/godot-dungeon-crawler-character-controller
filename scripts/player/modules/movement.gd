@@ -28,9 +28,6 @@ extends AbstractModule
 ## Action names definition (starfe right)
 @export var strafe_right_action_name: String = "strafe_right"
 
-## Size of player collider, needed for movement possibility check
-@export var player_collider_size = .4
-
 # Map actions to comman classes
 var movement_action_list = {
 	move_forward_action_name: MoveForwardCommand,
